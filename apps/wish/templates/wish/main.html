@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Main Page</title>
+</head>
+
+
+<body>
+
+    <div class="bg-dark py-3">
+        <div class="container text-light">
+            <div class="row justify-content-around">
+                <div class="col-7">
+                    <h5>Welcome <span class="text-info">{{current_user.first_name}}</span>!</h5>
+                </div>
+                <div class="col-5 text-right">
+                    <a href="/wishes/stats" class="btn btn-outline-light btn-sm">View Stats</a>
+                    <a href="/wishes/new" class="btn btn-outline-light btn-sm">Add a wish</a>
+                    <a href="/logout" class="btn btn-outline-light btn-sm">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container py-5">
+        <h5>Your wish list</h5>
+        <div class="row bg-secondary text-white py-2">
+            <div class="col-4">Item</div>
+            <div class="col-3">Date added</div>
+            <div class="col-5">Actions</div>
+        </div>
+        {% for wish in user_wishes_pending %}
+        <div class="row py-1 my-2">
+            <div class="col-4 py-2">{{wish.title}}</div>
+            <div class="col-3 py-2">{{wish.created_at | date}}</div>
+            <div class="col-5 nav">
+                <div class="nav-item">
+                    <form action="/wishes/remove_process" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="wish_id" value="{{wish.id}}">
+
+                        <button class="btn btn-link">Remove</button>
+                    </form>
+                </div>
+
+                <div class="nav-item">
+                    <a class="btn btn-link" href="wishes/edit/{{wish.id}}">Edit</a>
+                </div>
+
+                <div class="nav-item">
+                    <form action="wishes/granted_process" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="wish_id" value="{{wish.id}}">
+                        <button class="btn btn-link">Granted</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- granted list -->
+    <div class="container">
+        <h5>Granted list</h5>
+        <div class="row bg-secondary text-white py-2">
+            <div class="col-3">Item</div>
+            <div class="col-3">Wisher</div>
+            <div class="col-3">Date added</div>
+            <div class="col-3">Date Granted</div>
+        </div>
+        {% for granted in all_wished_granted %}
+        <div class="row py-1 my-2">
+            <div class="col-3">{{granted.title}}</div>
+            <div class="col-3">{{granted.user.first_name}}</div>
+            <div class="col-3">{{granted.created_at | date}}</div>
+            <div class="col-3">{{granted.updated_at | date}}</div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
