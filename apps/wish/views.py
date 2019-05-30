@@ -4,7 +4,7 @@ import bcrypt
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib import messages
 
-from .models import Users, Wishes
+from .models import Users, Wishes, Likes
 
 
 def index(request):
@@ -71,10 +71,16 @@ def dash_board(request):
     # display all wishes granted
     all_wished_granted = Wishes.objects.filter(wish_stage=1)
 
+    user_likes = current_user.likes.all()
+    user_liked_wishes_id_list = []
+    for like in user_likes:
+        user_liked_wishes_id_list.append(like.wishes.id)
+
     context = {
         'current_user': current_user,
         'user_wishes_pending': user_wishes_pending,
-        'all_wished_granted': all_wished_granted
+        'all_wished_granted': all_wished_granted,
+        'user_liked_wishes_id_list': user_liked_wishes_id_list
     }
 
     return render(request, 'wish/main.html', context)
@@ -171,6 +177,27 @@ def granted_process(request):
     this_wish = Wishes.objects.get(id=str(request.POST['wish_id']))
     this_wish.wish_stage = 1
     this_wish.save()
+    return redirect('/wishes')
+
+
+def like_process(request):
+    current_user = Users.objects.get(id=int(request.session['user_id']))
+    this_wish = Wishes.objects.get(id=str(request.POST['wish_id']))
+
+    new_like = Likes.objects.create(
+        likes=1, user=current_user, wishes=this_wish)
+
+    return redirect('/wishes')
+
+
+def unlike_process(request):
+    current_user = Users.objects.get(id=int(request.session['user_id']))
+    this_wish = Wishes.objects.get(id=str(request.POST['wish_id']))
+
+    like_list = Likes.objects.filter(user=current_user, wishes=this_wish)
+    for like in like_list:
+        like.delete()
+
     return redirect('/wishes')
 
 

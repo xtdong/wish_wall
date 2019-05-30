@@ -48,9 +48,18 @@ class Users(models.Model):
 class Wishes(models.Model):
     title = models.CharField(max_length=45)
     desc = models.TextField(max_length=225)
-    likes = models.IntegerField(default=0)
     wish_stage = models.IntegerField(default=0)
     user = models.ForeignKey(
         Users, on_delete=models.CASCADE, related_name="wishes")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Likes(models.Model):
+    likes = models.IntegerField(default=0)
+    user = models.ForeignKey(
+        Users, on_delete=models.CASCADE, related_name="likes")
+    wishes = models.ForeignKey(
+        Wishes, on_delete=models.CASCADE, related_name="likes")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

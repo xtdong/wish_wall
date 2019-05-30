@@ -8,6 +8,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- icon font -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+        integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
     <title>Main Page</title>
 </head>
@@ -69,20 +72,54 @@
     <!-- granted list -->
     <div class="container">
         <h5>Granted list</h5>
-        <div class="row bg-secondary text-white py-2">
-            <div class="col-3">Item</div>
-            <div class="col-3">Wisher</div>
-            <div class="col-3">Date added</div>
-            <div class="col-3">Date Granted</div>
-        </div>
+
         {% for granted in all_wished_granted %}
-        <div class="row py-1 my-2">
-            <div class="col-3">{{granted.title}}</div>
-            <div class="col-3">{{granted.user.first_name}}</div>
-            <div class="col-3">{{granted.created_at | date}}</div>
-            <div class="col-3">{{granted.updated_at | date}}</div>
+        <div class="border m-3 p-3 rounded bd-callout bd-callout-warning">
+            <div class="row py-3 border-bottom">
+                <div class="col-8">
+                    <span class="bg-danger text-white p-2 small rounded-pill">Item</span> {{granted.title}} </div>
+                <div class="col-4 text-right row">
+                    <div class="col-4">
+                        {{granted.likes.all | length}}
+                        <i class="fab fa-gratipay text-warning"></i>
+                    </div>
+
+                    <!-- <p class="small">You liked this wish</p> -->
+                    <div class="col-auto ">
+                        {% if granted.id in user_liked_wishes_id_list %}
+                        <form action="/wishes/unlike_process" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="wish_id" value="{{granted.id}}">
+                            <button class="btn-sm btn btn-link">Unlike</button>
+                        </form>
+
+                        {% else %}
+                        <form action="/wishes/like_process" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="wish_id" value="{{granted.id}}">
+                            <button class="btn-sm btn btn-link">Add a Like</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="row py-2">
+                <div class="col-6">
+                    <span class="small">Wisher:</span>
+                    <p>{{granted.user.first_name}} {{granted.user.last_name}}</p>
+                </div>
+                <div class="col-3 border-left">
+                    <span class="small">Date added</span>
+                    <p>{{granted.created_at | date}}</p>
+                </div>
+                <div class="col-3 border-left">
+                    <span class="small">Date Granted</span>
+                    <p>{{granted.updated_at | date}}</p>
+                </div>
+            </div>
         </div>
         {% endfor %}
+        <!-- each granted -->
 
     </div>
 

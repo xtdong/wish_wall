@@ -15,6 +15,8 @@ urlpatterns = [
     url(r'^wishes/edit_process$', views.edit_process),
     url(r'^wishes/remove_process$', views.remove_process),
     url(r'^wishes/granted_process$', views.granted_process),
+    url(r'^wishes/like_process$', views.like_process),
+    url(r'^wishes/unlike_process$', views.unlike_process),
 
     url(r'^wishes/stats$', views.stats),
 
